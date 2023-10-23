@@ -3,6 +3,7 @@ package com.yunusbagriyanik.elasticsearchquerytypes.service;
 import com.yunusbagriyanik.elasticsearchquerytypes.model.Course;
 import com.yunusbagriyanik.elasticsearchquerytypes.util.IndexEnum;
 import lombok.RequiredArgsConstructor;
+import org.elasticsearch.common.unit.Fuzziness;
 import org.elasticsearch.index.query.Operator;
 import org.springframework.data.elasticsearch.core.ElasticsearchOperations;
 import org.springframework.data.elasticsearch.core.SearchHit;
@@ -26,6 +27,17 @@ public class ElasticsearchService {
                         matchQuery("description", searchText)
                                 .operator(Operator.AND)
                 )
+                .build();
+        return elasticsearchOperations.search(searchQuery, Course.class,
+                IndexCoordinates.of(IndexEnum.COURSE.getIndexName())).getSearchHits();
+    }
+
+    public List<SearchHit<Course>> getCoursesByFuzzyDescription(String searchText) {
+        final NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(matchQuery("description", searchText)
+                        .operator(Operator.AND)
+                        .fuzziness(Fuzziness.ONE)
+                        .prefixLength(2))
                 .build();
         return elasticsearchOperations.search(searchQuery, Course.class,
                 IndexCoordinates.of(IndexEnum.COURSE.getIndexName())).getSearchHits();

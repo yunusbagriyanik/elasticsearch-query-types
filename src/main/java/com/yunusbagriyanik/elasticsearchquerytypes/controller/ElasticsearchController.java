@@ -14,8 +14,13 @@ import org.springframework.web.bind.annotation.RestController;
 public class ElasticsearchController {
     private final ElasticsearchService elasticSearchService;
 
-    @GetMapping("/full-text-search-course-by-desc")
-    public ResponseEntity<?> searchCourseByDesc(@RequestParam String description) {
+    @GetMapping("/full-text-search-courses-by-desc")
+    public ResponseEntity<?> searchCoursesByDesc(@RequestParam String description) {
         return ResponseEntity.ok(elasticSearchService.searchCourseByDesc(description));
+    }
+
+    @GetMapping("/fuzzy-search-courses-by-desc")
+    public ResponseEntity<?> getCoursesByFuzzyDescription(@RequestParam String description) {
+        return ResponseEntity.ok(elasticSearchService.getCoursesByFuzzyDescription(description));
     }
 }
