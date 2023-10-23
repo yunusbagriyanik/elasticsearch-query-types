@@ -32,6 +32,13 @@ public class ElasticsearchService {
                 IndexCoordinates.of(IndexEnum.COURSE.getIndexName())).getSearchHits();
     }
 
+    /**
+     * Finds courses containing the specified text in the "description" field.
+     * Allows for small errors during the search (fuzzy search) and the requirement is stated that there should be no modification in the first two letters of the words.
+     *
+     * @param searchText The search text
+     * @return List of search results, returns an empty list if not exists.
+     */
     public List<SearchHit<Course>> getCoursesByFuzzyDescription(String searchText) {
         final NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
                 .withQuery(matchQuery("description", searchText)
