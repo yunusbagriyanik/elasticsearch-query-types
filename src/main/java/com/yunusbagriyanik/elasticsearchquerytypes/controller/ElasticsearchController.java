@@ -23,4 +23,9 @@ public class ElasticsearchController {
     public ResponseEntity<?> getCoursesByFuzzyDescription(@RequestParam String description) {
         return ResponseEntity.ok(elasticSearchService.getCoursesByFuzzyDescription(description));
     }
+
+    @GetMapping("/phrase-search")
+    public ResponseEntity<?> getCoursesByDescPhraseSearch(@RequestParam String description) {
+        return ResponseEntity.ok(elasticSearchService.getCoursesByDescPhraseSearch(description));
+    }
 }

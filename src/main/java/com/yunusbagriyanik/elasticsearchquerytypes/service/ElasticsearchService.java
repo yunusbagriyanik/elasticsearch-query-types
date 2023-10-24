@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+import static org.elasticsearch.index.query.QueryBuilders.matchPhraseQuery;
 import static org.elasticsearch.index.query.QueryBuilders.matchQuery;
 
 @Service
@@ -41,10 +42,31 @@ public class ElasticsearchService {
      */
     public List<SearchHit<Course>> getCoursesByFuzzyDescription(String searchText) {
         final NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
-                .withQuery(matchQuery("description", searchText)
-                        .operator(Operator.AND)
-                        .fuzziness(Fuzziness.ONE)
-                        .prefixLength(2))
+                .withQuery(
+                        matchQuery("description", searchText)
+                                .operator(Operator.AND)
+                                .fuzziness(Fuzziness.ONE)
+                                .prefixLength(2)
+                )
+                .build();
+        return elasticsearchOperations.search(searchQuery, Course.class,
+                IndexCoordinates.of(IndexEnum.COURSE.getIndexName())).getSearchHits();
+    }
+
+    /**
+     * Performs a search in the Elasticsearch database in the "description" field with the given description text.
+     * The search results are returned as a list containing exact matching documents.
+     * During the search, up to 1 word gap is allowed between the words.(slop)
+     *
+     * @param description search text
+     * @return List of search results, returns an empty list if not exists.
+     */
+    public List<SearchHit<Course>> getCoursesByDescPhraseSearch(String description) {
+        final NativeSearchQuery searchQuery = new NativeSearchQueryBuilder()
+                .withQuery(
+                        matchPhraseQuery("description", description)
+                                .slop(1)
+                )
                 .build();
         return elasticsearchOperations.search(searchQuery, Course.class,
                 IndexCoordinates.of(IndexEnum.COURSE.getIndexName())).getSearchHits();
