@@ -1,0 +1,27 @@
+curl -X PUT "http://localhost:9200/courses" -H 'Content-Type: application/json' -d'
+{
+  "settings": {
+    "analysis": {
+      "analyzer": {
+        "elastic_analyzer": {
+          "type": "custom",
+          "tokenizer": "standard",
+          "filter": [
+            "lowercase",
+            "asciifolding"
+          ]
+        }
+      }
+    }
+  },
+  "mappings": {
+    "properties": {
+      "courseId": { "type": "keyword" },
+      "name": { "type": "text", "analyzer": "elastic_analyzer" },
+      "description": { "type": "text", "analyzer": "elastic_analyzer" },
+      "instructor": { "type": "object" },
+      "students": { "type": "nested" }
+    }
+  }
+}
+'
