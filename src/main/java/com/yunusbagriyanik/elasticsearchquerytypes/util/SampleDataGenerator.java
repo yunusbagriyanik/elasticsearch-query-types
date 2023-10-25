@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.yunusbagriyanik.elasticsearchquerytypes.model.Course;
 import com.yunusbagriyanik.elasticsearchquerytypes.model.Instructor;
 import com.yunusbagriyanik.elasticsearchquerytypes.model.Student;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.elasticsearch.action.index.IndexRequest;
@@ -84,8 +85,17 @@ public class SampleDataGenerator {
                 .instructor(instructor1)
                 .students(List.of(student1))
                 .build();
+
+        Course course4 = Course.builder()
+                .id(UUID.randomUUID().toString())
+                .courseId("C303")
+                .name("Database Design")
+                .description("Léarn how to desığn databases")
+                .instructor(instructor1)
+                .students(List.of(student1, student2))
+                .build();
         Function<Course, String> getCourseId = Course::getId;
-        addEntitiesToElasticsearch(List.of(course1, course2, course3), IndexEnum.COURSE.getIndexName(), getCourseId);
+        addEntitiesToElasticsearch(List.of(course1, course2, course3, course4), IndexEnum.COURSE.getIndexName(), getCourseId);
     }
 
     private <T> void addEntitiesToElasticsearch(List<T> entities, String indexName, Function<T, String> getIdFunction) {
